@@ -190,11 +190,23 @@ Each session file includes these sections:
 - [Related sessions]
 ```
 
-## Git Integration Workflow
+## Manual Git Integration Workflow
 
-### Commit Messages
+### Manual Commit Process
 
-The system automatically generates descriptive commit messages:
+You control all git operations manually:
+
+```bash
+# Check what's ready to commit
+./docs/chat-logs/exports/quick-export.sh status-git
+
+# Stage and commit chat logs manually
+git add docs/chat-logs/
+git commit -m "docs: add chat session - [session-name]"
+git push
+```
+
+### Example Commit Messages
 
 ```
 docs: add chat session - 2025-01-15-session-002-chat-export-setup

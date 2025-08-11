@@ -85,7 +85,7 @@ create_session() {
         
         # Session created successfully - user can commit manually when ready
         echo
-        log_info "Session file created. Use './docs/chat-logs/exports/quick-export.sh commit' to commit when ready."
+        log_info "Session file created. Use 'git add docs/chat-logs/ && git commit' to commit when ready."
     else
         log_error "Failed to create session file"
         exit $exit_code
@@ -128,51 +128,24 @@ quick_session() {
     fi
 }
 
-# Commit session changes
-commit_session() {
-    log_info "Committing session changes..."
+# Show git status for chat logs (read-only)
+show_chat_log_status() {
+    log_info "Chat log git status:"
     
     cd "$PROJECT_ROOT"
     
-    # Check if there are any chat log changes to commit
-    if ! git status --porcelain | grep -q "docs/chat-logs/"; then
-        log_warning "No chat log changes to commit"
-        return 0
-    fi
-    
-    # Stage chat log files
-    git add docs/chat-logs/
-    
-    # Get the most recent session file for commit message
-    local recent_session=""
-    if [ -d "docs/chat-logs/sessions" ]; then
-        recent_session=$(ls -1t docs/chat-logs/sessions/*.md 2>/dev/null | head -1)
-    fi
-    
-    if [ -n "$recent_session" ]; then
-        local session_name=$(basename "$recent_session" .md)
-        local commit_msg="docs: add chat session - $session_name
-
-Learning session documenting development progress and AI collaboration.
-
-Chat log: $recent_session"
+    # Check if there are any chat log changes
+    if git status --porcelain | grep -q "docs/chat-logs/"; then
+        log_info "Files ready to commit:"
+        git status --porcelain | grep "docs/chat-logs/" | sed 's/^/  /'
+        echo
+        log_info "To commit these changes manually:"
+        echo "  git add docs/chat-logs/"
+        echo "  git commit -m \"docs: add chat session - [session-name]\""
+        echo "  git push"
     else
-        local commit_msg="docs: update chat logs
-
-Update learning documentation and session records."
+        log_info "No chat log changes to commit"
     fi
-    
-    # Show what will be committed
-    log_info "Files to be committed:"
-    git status --porcelain | grep "docs/chat-logs/" | sed 's/^/  /'
-    
-    echo
-    log_info "Committing chat log changes..."
-    
-    git commit -m "$commit_msg"
-    log_success "Session committed successfully!"
-    
-    log_info "Use 'git push' to push changes to remote repository when ready."
 }
 
 # List recent sessions
@@ -200,9 +173,9 @@ create_summary() {
     if [ $? -eq 0 ]; then
         log_success "Weekly summary created for week $week"
         
-        # Auto-commit summaries without prompting
+        # Summary created successfully - user can commit manually when ready
         echo
-        log_info "Summary created successfully. Use './docs/chat-logs/exports/quick-export.sh commit' to commit when ready."
+        log_info "Summary created successfully. Use 'git add docs/chat-logs/ && git commit' to commit when ready."
     else
         log_error "Failed to create weekly summary"
         exit 1
@@ -233,17 +206,17 @@ show_help() {
     echo "  status                    Show current project and git status"
     echo "  interactive, i            Start interactive session creation"
     echo "  quick <topic> [phase] [focus]  Quick session creation"
-    echo "  list, ls                  List recent sessions"
-    echo "  summary <week>            Create weekly summary"
-    echo "  commit                    Commit chat log changes"
-    echo "  export                    Show manual export instructions"
+echo "  list, ls                  List recent sessions"
+echo "  summary <week>            Create weekly summary"
+echo "  status-git                Show git status for chat logs"
+echo "  export                    Show manual export instructions"
     echo "  help, h                   Show this help message"
     echo
     echo "Examples:"
     echo "  $0 interactive"
     echo "  $0 quick \"player-implementation\" \"week-01\" \"Learn CharacterBody2D\""
     echo "  $0 summary 1"
-    echo "  $0 commit"
+echo "  $0 status-git"
     echo
     echo "The script will guide you through the process and integrate with git."
 }
@@ -268,8 +241,8 @@ main() {
         "summary")
             create_summary "$2"
             ;;
-        "commit")
-            commit_session
+        "status-git")
+            show_chat_log_status
             ;;
         "export")
             export_current

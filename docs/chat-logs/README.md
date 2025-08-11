@@ -62,7 +62,7 @@ The `export-chat.js` script handles:
 - Session numbering
 - Metadata extraction
 - Formatting standardization
-- Git integration
+- File creation (git operations are manual)
 
 ## Session File Template
 
@@ -119,9 +119,9 @@ The `export-chat.js` script handles:
 
 ## Integration with Development Workflow
 
-### Git Integration
+### Manual Git Integration
 ```bash
-# Include chat logs in feature commits
+# Include chat logs in feature commits (you run these commands)
 git add docs/chat-logs/sessions/[session-file].md
 git commit -m "feat: implement player controller
 
@@ -129,12 +129,12 @@ git commit -m "feat: implement player controller
 - Configure input mapping for WASD
 - Include chat log documenting implementation decisions
 
-Chat log: docs/chat-logs/sessions/2025-01-16-session-002-player-controller.md"
+Chat log: docs/chat-logs/sessions/2025-01-16-session-003-player-controller.md"
 ```
 
 ### Learning Milestone Tracking
 ```bash
-# Weekly summary commits
+# Weekly summary commits (you run these commands)
 git add docs/chat-logs/summaries/week-01-godot-fundamentals.md
 git commit -m "docs: complete Week 1 learning summary
 
