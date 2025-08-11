@@ -239,6 +239,68 @@ Development process documented in:
 docs/chat-logs/sessions/2025-01-16-session-003-player-implementation.md"
 ```
 
+## Pre-Commit Hook Integration
+
+The repository includes a pre-commit hook that automatically enforces the inclusion of chat logs with development commits.
+
+### How It Works
+
+The hook automatically:
+- **Detects development commits** by checking for files like `.cs`, `.gd`, `.tscn`, `.tres`, `.md`, and directories like `src/`, `Scenes/`, `test/`
+- **Validates chat log status** by checking for untracked or unstaged chat log files
+- **Blocks commits** if chat logs are missing with clear instructions
+- **Allows commits** when all chat logs are properly staged
+
+### Hook Behavior
+
+**✅ Commits Allowed:**
+- Non-development files (config, README, etc.)
+- Development files with all chat logs staged
+- Using override options (see below)
+
+**❌ Commits Blocked:**
+- Development files with untracked chat logs in `docs/chat-logs/sessions/`
+- Development files with unstaged changes to chat log files
+
+### Override Options
+
+For commits that don't require chat logs (non-AI-assisted work):
+
+```bash
+# Option 1: Skip all pre-commit hooks
+git commit --no-verify -m "fix: emergency bug fix"
+
+# Option 2: Add [skip-chat-logs] to commit message
+git commit -m "chore: update config [skip-chat-logs]"
+```
+
+### Example Workflow
+
+```bash
+# 1. Make development changes
+echo "// New feature" > src/Player.cs
+
+# 2. Export chat logs for this session
+./docs/chat-logs/exports/quick-export.sh quick "player-implementation"
+
+# 3. Stage everything
+git add src/Player.cs docs/chat-logs/
+
+# 4. Commit (hook will validate and allow)
+git commit -m "feat: implement player controller
+
+Related chat log: docs/chat-logs/sessions/2025-01-16-session-003-player-implementation.md"
+```
+
+### Hook Messages
+
+The hook provides clear, color-coded messages:
+
+- **🔵 INFO**: General information about validation process
+- **❌ ERROR**: Blocking conditions with specific files listed
+- **⚠️ WARNING**: Override options and suggestions
+- **✅ SUCCESS**: Validation passed
+
 ## Learning Workflow Integration
 
 ### Daily Development Routine
